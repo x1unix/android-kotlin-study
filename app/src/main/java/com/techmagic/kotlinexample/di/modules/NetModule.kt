@@ -1,6 +1,7 @@
 package com.techmagic.kotlinexample.di.modules
 
 import com.google.gson.Gson
+import com.techmagic.kotlinexample.data.net.NetConstants
 import com.techmagic.kotlinexample.data.net.WeatherAPI
 import dagger.Module
 import dagger.Provides
@@ -16,11 +17,7 @@ import javax.inject.Singleton
  */
 
 @Module
-class NetModule() {
-
-    companion object {
-        val BASE_URL = "http://api.openweathermap.org"
-    }
+class NetModule {
 
     @Provides
     @Singleton
@@ -33,7 +30,7 @@ class NetModule() {
     @Provides
     @Singleton
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit = Retrofit.Builder()
-            .baseUrl(BASE_URL)
+            .baseUrl(NetConstants.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create(Gson()))
             .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
             .client(okHttpClient)

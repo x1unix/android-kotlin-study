@@ -1,7 +1,9 @@
 package com.techmagic.kotlinexample.data.net
 
 import com.techmagic.kotlinexample.data.DataMapper
+import com.techmagic.kotlinexample.data.Mapper
 import com.techmagic.kotlinexample.data.manager.Manager
+import com.techmagic.kotlinexample.domain.Units
 import com.techmagic.kotlinexample.domain.pojo.WeatherDataDto
 import rx.Observable
 
@@ -18,7 +20,9 @@ class WeatherAPIManager : Manager {
         this.dataMapper = dataMapper
     }
 
-    fun loadWeather(): Observable<List<WeatherDataDto>> {
-        return weatherAPI.loadWeather().map { forecastListEntity -> dataMapper.map(forecastListEntity) }
+    fun loadWeather(units: Units, count: Int): Observable<List<WeatherDataDto>> {
+        val unitsString: String = Mapper.map(units)
+
+        return weatherAPI.loadWeather(count, unitsString).map { forecastListEntity -> dataMapper.map(forecastListEntity) }
     }
 }
