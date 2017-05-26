@@ -11,27 +11,29 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import com.bumptech.glide.Glide
+import com.techmagic.kotlinexample.KotlinExampleApp
 import com.techmagic.kotlinexample.R
 import com.techmagic.kotlinexample.domain.pojo.WeatherDataDto
 import org.jetbrains.anko.find
 import org.jetbrains.anko.toast
+import javax.inject.Inject
 
 class MainActivity : AppCompatActivity(), MainView {
 
-    private var forecastList: RecyclerView? = null
-    private var progressBar: ProgressBar? = null
-    private var presenter: MainPresenter = MainPresenter()
+    @Inject
+    lateinit var presenter: MainPresenter
+
+    private lateinit var forecastList: RecyclerView
+    private lateinit var progressBar: ProgressBar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        forecastList = find(R.id.rv_forecast_list)
-        progressBar = find(R.id.pb_progress)
+        initViews()
 
+        KotlinExampleApp.app?.getAppComponent()?.inject(this)
         presenter.setView(this)
-
-        forecastList!!.visibility = View.GONE
     }
 
     override fun onDestroy() {
@@ -50,8 +52,8 @@ class MainActivity : AppCompatActivity(), MainView {
     }
 
     override fun showProgress() {
-        forecastList!!.visibility = View.GONE
-        progressBar!!.visibility = View.VISIBLE
+        forecastList.visibility = View.GONE
+        progressBar.visibility = View.VISIBLE
     }
 
     override fun hideProgress() {
@@ -60,17 +62,24 @@ class MainActivity : AppCompatActivity(), MainView {
     }
 
     override fun showData(weatherData: List<WeatherDataDto>?) {
-        forecastList!!.layoutManager = LinearLayoutManager(this)
+        forecastList.layoutManager = LinearLayoutManager(this)
 
         if (weatherData != null) {
             forecastList!!.adapter = ForecastListAdapter(weatherData)
         }
     }
 
+    private fun initViews() {
+        forecastList = find(R.id.rv_forecast_list)
+        progressBar = find(R.id.pb_progress)
+
+        forecastList.visibility = View.GONE
+    }
+
     inner class ForecastListAdapter(val items: List<WeatherDataDto>) : RecyclerView.Adapter<ForecastListAdapter.ViewHolder>() {
 
         override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
-            var weatherDataDto : WeatherDataDto = items[position]
+            val weatherDataDto: WeatherDataDto = items[position]
             holder!!.temperature!!.text = weatherDataDto.temperature.toString()
             holder.humidity!!.text = weatherDataDto.humidity.toString()
             holder.description!!.text = weatherDataDto.description

@@ -11,6 +11,6 @@ import rx.Observable
 
 interface WeatherAPI {
 
-    @GET("http://api.openweathermap.org/data/2.5/forecast?q=Lviv&APPID=15646a06818f61f7b8d7823ca833e1ce&mode=json&units=metric&cnt=3")
+    @GET("data/2.5/forecast?q=Lviv&APPID=15646a06818f61f7b8d7823ca833e1ce&mode=json&units=metric&cnt=10")
     fun loadWeather(): Observable<ForecastListEntity>
 }
