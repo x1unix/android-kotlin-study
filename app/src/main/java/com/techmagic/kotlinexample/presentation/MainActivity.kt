@@ -57,15 +57,15 @@ class MainActivity : AppCompatActivity(), MainView {
     }
 
     override fun hideProgress() {
-        forecastList!!.visibility = View.VISIBLE
-        progressBar!!.visibility = View.GONE
+        forecastList.visibility = View.VISIBLE
+        progressBar.visibility = View.GONE
     }
 
     override fun showData(weatherData: List<WeatherDataDto>?) {
         forecastList.layoutManager = LinearLayoutManager(this)
 
         if (weatherData != null) {
-            forecastList!!.adapter = ForecastListAdapter(weatherData)
+            forecastList.adapter = ForecastListAdapter(weatherData)
         }
     }
 
