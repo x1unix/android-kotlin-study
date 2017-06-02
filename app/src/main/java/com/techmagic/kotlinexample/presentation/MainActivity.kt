@@ -18,7 +18,12 @@ import org.jetbrains.anko.find
 import org.jetbrains.anko.toast
 import javax.inject.Inject
 
+
 class MainActivity : AppCompatActivity(), MainView {
+
+    interface OnItemClickListener {
+        operator fun invoke(weatherData: WeatherDataDto)
+    }
 
     @Inject
     lateinit var presenter: MainPresenter
@@ -65,7 +70,11 @@ class MainActivity : AppCompatActivity(), MainView {
         forecastList.layoutManager = LinearLayoutManager(this)
 
         if (weatherData != null) {
-            forecastList.adapter = ForecastListAdapter(weatherData)
+            forecastList.adapter = ForecastListAdapter(weatherData, object : OnItemClickListener {
+                override fun invoke(weatherData: WeatherDataDto) {
+                    toast(weatherData.description)
+                }
+            })
         }
     }
 
@@ -76,16 +85,19 @@ class MainActivity : AppCompatActivity(), MainView {
         forecastList.visibility = View.GONE
     }
 
-    inner class ForecastListAdapter(val items: List<WeatherDataDto>) : RecyclerView.Adapter<ForecastListAdapter.ViewHolder>() {
+    inner class ForecastListAdapter(val items: List<WeatherDataDto>, var itemClickListener: OnItemClickListener) : RecyclerView.Adapter<ForecastListAdapter.ViewHolder>() {
 
         override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
-            val weatherDataDto: WeatherDataDto = items[position]
-            holder!!.temperature!!.text = weatherDataDto.temperature.toString()
-            holder.humidity!!.text = weatherDataDto.humidity.toString()
-            holder.description!!.text = weatherDataDto.description
-            holder.windSpeed!!.text = weatherDataDto.windSpeed.toString()
+            with(items[position]) {
+                holder!!.temperature!!.text = temperature.toString()
+                holder.humidity!!.text = humidity.toString()
+                holder.description!!.text = description
+                holder.windSpeed!!.text = windSpeed.toString()
 
-            Glide.with(this@MainActivity).load(weatherDataDto.iconUrl).into(holder.icon)
+                Glide.with(this@MainActivity).load(iconUrl).into(holder.icon)
+            }
+
+            holder!!.itemView.setOnClickListener { itemClickListener(items[position]) }
         }
 
         override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
@@ -93,9 +105,7 @@ class MainActivity : AppCompatActivity(), MainView {
             return ViewHolder(view)
         }
 
-        override fun getItemCount(): Int {
-            return items.size
-        }
+        override fun getItemCount(): Int = items.size
 
         inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             var temperature: TextView? = null
@@ -113,4 +123,5 @@ class MainActivity : AppCompatActivity(), MainView {
             }
         }
     }
+
 }

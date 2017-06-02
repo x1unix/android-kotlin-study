@@ -17,8 +17,12 @@ import rx.schedulers.Schedulers
  * Created by Roman Ursu on 5/25/17
  */
 
+const val WORKER_THREAD: String = "Thread"
+const val POST_EXECUTION_THREAD: String = "PostExecution"
+
 @Module
 class AppModule(private val app: KotlinExampleApp) {
+
 
     @Provides
     @Singleton
@@ -27,7 +31,7 @@ class AppModule(private val app: KotlinExampleApp) {
     }
 
     @Provides
-    @Named("Thread")
+    @Named(WORKER_THREAD)
     @Singleton
     fun provideThreadScheduler(): Scheduler {
         return Schedulers.io()
@@ -35,7 +39,7 @@ class AppModule(private val app: KotlinExampleApp) {
 
 
     @Provides
-    @Named("PostExecution")
+    @Named(POST_EXECUTION_THREAD)
     @Singleton
     fun providePostExecutionScheduler(): Scheduler {
         return AndroidSchedulers.mainThread()
