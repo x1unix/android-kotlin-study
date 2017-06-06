@@ -70,11 +70,7 @@ class MainActivity : AppCompatActivity(), MainView {
         forecastList.layoutManager = LinearLayoutManager(this)
 
         if (weatherData != null) {
-            forecastList.adapter = ForecastListAdapter(weatherData, object : OnItemClickListener {
-                override fun invoke(weatherData: WeatherDataDto) {
-                    toast(weatherData.description)
-                }
-            })
+            forecastList.adapter = ForecastListAdapter(weatherData) { toast(it.description) }
         }
     }
 
@@ -85,7 +81,7 @@ class MainActivity : AppCompatActivity(), MainView {
         forecastList.visibility = View.GONE
     }
 
-    inner class ForecastListAdapter(val items: List<WeatherDataDto>, var itemClickListener: OnItemClickListener) : RecyclerView.Adapter<ForecastListAdapter.ViewHolder>() {
+    inner class ForecastListAdapter(val items: List<WeatherDataDto>, val itemClick: (WeatherDataDto) -> Unit) : RecyclerView.Adapter<ForecastListAdapter.ViewHolder>() {
 
         override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
             with(items[position]) {
@@ -97,7 +93,7 @@ class MainActivity : AppCompatActivity(), MainView {
                 Glide.with(this@MainActivity).load(iconUrl).into(holder.icon)
             }
 
-            holder!!.itemView.setOnClickListener { itemClickListener(items[position]) }
+            holder!!.itemView.setOnClickListener { itemClick(items[position]) }
         }
 
         override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
