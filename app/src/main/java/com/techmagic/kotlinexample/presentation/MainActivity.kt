@@ -82,23 +82,22 @@ class MainActivity : AppCompatActivity(), MainView {
     }
 
     inner class ForecastListAdapter(val items: List<WeatherDataDto>, val itemClick: (WeatherDataDto) -> Unit) : RecyclerView.Adapter<ForecastListAdapter.ViewHolder>() {
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+            val view: View = LayoutInflater.from(parent.context).inflate(R.layout.item_forecastitem, parent, false)
+            return ViewHolder(view)
+        }
 
-        override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
+        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             with(items[position]) {
-                holder!!.temperature!!.text = temperature.toString()
+                holder.temperature!!.text = temperature.toString()
                 holder.humidity!!.text = humidity.toString()
                 holder.description!!.text = description
                 holder.windSpeed!!.text = windSpeed.toString()
 
-                Glide.with(this@MainActivity).load(iconUrl).into(holder.icon)
+                Glide.with(this@MainActivity).load(iconUrl).into(holder.icon!!)
             }
 
-            holder!!.itemView.setOnClickListener { itemClick(items[position]) }
-        }
-
-        override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
-            val view: View = LayoutInflater.from(parent!!.context).inflate(R.layout.item_forecastitem, parent, false)
-            return ViewHolder(view)
+            holder.itemView.setOnClickListener { itemClick(items[position]) }
         }
 
         override fun getItemCount(): Int = items.size
